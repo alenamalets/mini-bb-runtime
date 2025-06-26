@@ -1,0 +1,16 @@
+# Elixir
+/_build
+/deps
+*.ez
+
+# Mix
+mix.lock
+
+# Docker
+*.tar
+*.log
+.env
+
+# VS Code
+.vscode
+.DS_Store

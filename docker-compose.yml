@@ -1,0 +1,16 @@
+# docker-compose.yml
+services:
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  compiler:
+    build:
+      context: ./backend/data_compiler
+    container_name: compiler
+    volumes:
+      - ./backend/data_compiler:/app
+    working_dir: /app
+    depends_on:
+      - redis
