@@ -6,6 +6,7 @@ defmodule DataApi.Application do
 
   def start(_type, _args) do
     children = [
+      DataApi.Repo,
       {Redix, host: @default_host, port: @default_port, name: :redis_server},
       {Plug.Cowboy, scheme: :http, plug: DataApi.Router, options: [port: 4001]}
     ]

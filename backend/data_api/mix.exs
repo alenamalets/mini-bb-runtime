@@ -25,7 +25,9 @@ defmodule DataApi.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:plug, "~> 1.14"},
       {:jason, "~> 1.0"},
-      {:redix, "~> 1.1"}
+      {:redix, "~> 1.1"},
+      {:ecto_sql, "~> 3.11"},
+      {:postgrex, ">= 0.0.0"}
     ]
   end
 end
