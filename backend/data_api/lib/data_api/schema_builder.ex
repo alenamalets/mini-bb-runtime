@@ -20,4 +20,25 @@ defmodule DataApi.SchemaBuilder do
         {:error, reason}
     end
   end
+
+  def insert_test_data(%{"table" => table, "columns" => columns}) do
+    # Prepare INSERT statement
+    column_list = Enum.join(columns, ", ")
+    placeholders = Enum.map(1..length(columns), fn i -> "$#{i}" end) |> Enum.join(", ")
+
+    sql = "INSERT INTO #{table} (#{column_list}) VALUES (#{placeholders})"
+
+    # Example data rows
+    rows = [
+      ["1", "Alice", "alice@example.com"],
+      ["2", "Bob", "bob@example.com"],
+      ["3", "Charlie", "charlie@example.com"]
+    ]
+
+    Enum.each(rows, fn row ->
+      Ecto.Adapters.SQL.query!(DataApi.Repo, sql, row)
+    end)
+
+    :ok
+  end
 end
