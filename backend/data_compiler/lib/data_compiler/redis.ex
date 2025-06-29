@@ -14,11 +14,4 @@ defmodule DataCompiler.Redis do
     encoded = Jason.encode!(value)
     Redix.command!(conn, ["SET", key, encoded])
   end
-
-  def get(key, conn \\ :redis_server) do
-    case Redix.command!(conn, ["GET", key]) do
-      nil -> nil
-      json -> Jason.decode!(json)
-    end
-  end
 end

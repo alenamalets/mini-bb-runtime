@@ -10,4 +10,4 @@ RUN mix local.hex --force && \
 COPY . .              
 RUN mix compile
 
-CMD ["mix", "run", "-e", "DataCompiler.run()"]
+CMD ["mix", "run", "--no-halt"]

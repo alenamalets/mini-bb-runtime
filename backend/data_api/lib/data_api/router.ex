@@ -3,6 +3,7 @@ defmodule DataApi.Router do
   require Logger
 
   alias DataApi.SchemaBuilder
+  alias DataApi.Redis
 
   plug(:match)
 
@@ -14,38 +15,20 @@ defmodule DataApi.Router do
 
   plug(:dispatch)
 
-  # Manually create "users" table
-  get "/create-table" do
-    schema = %{
-      "table" => "users",
-      "columns" => ["id", "name", "email"]
-    }
+  # Get schema definition from Redis
+  get "/schema/:table" do
+    key = "compiled_schema:#{table}"
 
-    case SchemaBuilder.create(schema) do
-      :ok -> send_resp(conn, 200, "✅ Table created!")
-      {:error, reason} -> send_resp(conn, 500, "❌ Failed to create table: #{inspect(reason)}")
-    end
-  end
-
-  # Populate "users" table with test data
-  get "/populate" do
-    key = "compiled_schema:users"
-
-    case Redix.command!(:redis_server, ["GET", key]) do
+    case Redis.get(key) do
       nil ->
         send_resp(conn, 404, Jason.encode!(%{error: "Schema not found"}))
 
-      json ->
-        schema = Jason.decode!(json)
-
-        case SchemaBuilder.insert_test_data(schema) do
-          :ok -> send_resp(conn, 200, "✅ Test data inserted!")
-          {:error, reason} -> send_resp(conn, 500, "❌ Failed to insert data: #{inspect(reason)}")
-        end
+      data ->
+        send_resp(conn, 200, Jason.encode!(data))
     end
   end
 
-  # fetch data from a specific table
+  # Fetch data from a table with optional filters, sorting, pagination
   get "/data/:table" do
     table = String.to_atom(table)
     params = Plug.Conn.fetch_query_params(conn).params
@@ -66,7 +49,6 @@ defmodule DataApi.Router do
         _ -> "WHERE " <> Enum.join(filters, " AND ")
       end
 
-    IO.inspect(where_clause, label: "where_clause")
     # Sorting
     sort = Map.get(params, "sort", nil)
     order = Map.get(params, "order", "asc")
@@ -128,16 +110,39 @@ defmodule DataApi.Router do
     end
   end
 
-  # Read schema from Redis and respond
-  get "/schema/:table" do
+  # Insert test data into a table
+  # Test/dev endpoint
+  get "/populate" do
+    key = "compiled_schema:users"
+
+    case Redis.get(key) do
+      nil ->
+        send_resp(conn, 404, Jason.encode!(%{error: "Schema not found"}))
+
+      schema ->
+        case SchemaBuilder.insert_test_data(schema) do
+          :ok -> send_resp(conn, 200, "✅ Test data inserted!")
+          {:error, reason} -> send_resp(conn, 500, "❌ Failed to insert data: #{inspect(reason)}")
+        end
+    end
+  end
+
+  # Create a table dynamically from Redis schema
+  # Test/dev endpoint
+  post "/create-table/:table" do
     key = "compiled_schema:#{table}"
 
-    case Redix.command!(:redis_server, ["GET", key]) do
+    case Redis.get(key) do
       nil ->
         send_resp(conn, 404, Jason.encode!(%{error: "Schema not found"}))
 
       json ->
-        send_resp(conn, 200, json)
+        schema = json
+
+        case SchemaBuilder.create(schema) do
+          :ok -> send_resp(conn, 200, "✅ Table created!")
+          {:error, reason} -> send_resp(conn, 500, "❌ Failed to create table: #{inspect(reason)}")
+        end
     end
   end
 
