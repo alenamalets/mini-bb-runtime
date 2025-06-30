@@ -30,43 +30,54 @@ defmodule DataApi.Router do
     end
   end
 
-  # Fetch data from a table with optional filters, sorting, pagination
+  # Get data from a specific table with filtering, sorting, and pagination
   get "/data/:table" do
     table = String.to_atom(table)
     params = Plug.Conn.fetch_query_params(conn).params
 
-    # Filtering
-    filters =
+    # --- Filtering ---
+    where_clause =
       case params["filter"] do
         nil ->
-          []
+          ""
 
         filter_map ->
-          Enum.map(filter_map, fn {k, v} -> "#{k} = '#{v}'" end)
+          conditions =
+            Enum.map(filter_map, fn {k, v} ->
+              "#{k} ILIKE '%#{v}%'"
+            end)
+
+          "WHERE " <> Enum.join(conditions, " OR ")
       end
 
-    where_clause =
-      case filters do
-        [] -> ""
-        _ -> "WHERE " <> Enum.join(filters, " AND ")
-      end
-
-    # Sorting
+    # --- Sorting ---
     sort = Map.get(params, "sort", nil)
-    order = Map.get(params, "order", "asc")
 
     order_clause =
       if sort do
-        "ORDER BY #{sort} #{String.upcase(order)}"
+        "ORDER BY #{sort} ASC"
       else
         ""
       end
 
-    # Pagination
+    # --- Pagination ---
     limit = Map.get(params, "limit", "10") |> String.to_integer()
     page = Map.get(params, "page", "1") |> String.to_integer()
     offset = (page - 1) * limit
 
+    # --- Count total rows (without pagination) ---
+    count_sql = """
+    SELECT COUNT(*) FROM #{table}
+    #{where_clause}
+    """
+
+    total =
+      case Ecto.Adapters.SQL.query(DataApi.Repo, count_sql, []) do
+        {:ok, %{rows: [[count]]}} -> count
+        _ -> 0
+      end
+
+    # --- Main data query with LIMIT + OFFSET ---
     sql = """
     SELECT * FROM #{table}
     #{where_clause}
@@ -83,7 +94,14 @@ defmodule DataApi.Router do
             Enum.zip(columns, row) |> Enum.into(%{})
           end)
 
-        send_resp(conn, 200, Jason.encode!(result))
+        send_resp(
+          conn,
+          200,
+          Jason.encode!(%{
+            rows: result,
+            total_count: total
+          })
+        )
 
       {:error, reason} ->
         send_resp(conn, 500, Jason.encode!(%{error: inspect(reason)}))
