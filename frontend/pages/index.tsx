@@ -42,7 +42,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gray-100 py-10 px-4 sm:px-8">
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-6">
-        {/* 🧾 Header: title + add button */}
+        {/* header title and add button */}
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold text-gray-800">Users</h1>
           <button
@@ -53,7 +53,7 @@ export default function Home() {
           </button>
         </div>
 
-        {/* 🔍 Filter input */}
+        {/* filter input */}
         <div className="mb-4">
           <input
             value={filterText}
@@ -66,7 +66,7 @@ export default function Home() {
           />
         </div>
 
-        {/* ⏳ Loading state OR table + pagination */}
+        {/* loading state OR table*/}
         {loading ? (
           <div className="space-y-2 w-full sm:w-1/2">
             {[...Array(5)].map((_, i) => (
@@ -96,7 +96,7 @@ export default function Home() {
               />
             </div>
 
-            {/* ⏩ Pagination */}
+            {/* pagination */}
             <div className="mt-4 flex justify-center items-center gap-4">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -119,7 +119,7 @@ export default function Home() {
           </>
         )}
 
-        {/* 🧩 Modal */}
+        {/* modal */}
         <CreateRecordModal
           isOpen={showModal}
           onClose={() => setShowModal(false)}
