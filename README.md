@@ -6,8 +6,8 @@ A mini runtime implementation for Betty Blocks
 
 - Elixir
 - Redis
-- Docker
-- React, Next.js
+- Docker / Docker Compose
+- React + Next.js (TypeScript)
 - Tailwind CSS
 
 ## 🚀 Running the Project
@@ -25,8 +25,6 @@ Backend API: http://localhost:4001
 ## 🧱 Services Overview
 
 ### data-compiler
-
-This service:
 
 - Reads data from JSON files
 
@@ -50,7 +48,9 @@ Returns the ordered column names for a table.
 
 Example:
 
-`{ "columns": ["id", "name", "email", "role"] }`
+```
+{ "columns": ["id", "name", "email", "role"] }
+```
 
 `GET /data/:table`
 
@@ -66,20 +66,28 @@ Query Params:
 
 - page=1
 
-`/data/users?filter[name]=bob&sort=name&page=2&limit=5`
+```
+/data/users?filter[name]=bob&sort=name&page=2&limit=5
+```
 
 Example:
 
-`{
+```
+{
   "rows": [ ... ],
   "total_count": 42
-}`
+}
+```
 
 `POST /data/:table`
+
 Insert a new row into a table.
 
 Body:
-`{ "name": "Alice", "email": "alice@example.com", "role": "Admin" }`
+
+```
+{ "name": "Alice", "email": "alice@example.com", "role": "Admin" }
+```
 
 ## 🖥️ Frontend Features
 
@@ -94,3 +102,7 @@ Body:
 - Modal form to create new records
 
 - Fully styled with Tailwind (responsive layout)
+
+```
+
+```
