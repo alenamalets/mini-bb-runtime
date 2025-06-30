@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Table from "../components/table";
 import { fetchData } from "../utils/api";
 export default function Home() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
