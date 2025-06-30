@@ -29,14 +29,16 @@ defmodule DataApi.SchemaBuilder do
     sql = "INSERT INTO #{table} (#{column_list}) VALUES (#{placeholders})"
 
     # Example data rows
-    rows = [
-      ["1", "Alice", "alice@example.com", "owner"],
-      ["2", "Bob", "bob@example.com", "admin"],
-      ["3", "Charlie", "charlie@example.com", "user"]
+    base_rows = [
+      ["Alice", "alice@example.com", "owner"],
+      ["Bob", "bob@example.com", "admin"],
+      ["Charlie", "charlie@example.com", "user"]
     ]
 
-    Enum.each(rows, fn row ->
-      Ecto.Adapters.SQL.query!(DataApi.Repo, sql, row)
+    Enum.each(base_rows, fn row ->
+      uuid = UUID.uuid4()
+      full_row = [uuid | row]
+      Ecto.Adapters.SQL.query!(DataApi.Repo, sql, full_row)
     end)
 
     :ok

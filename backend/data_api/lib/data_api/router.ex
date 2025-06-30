@@ -94,7 +94,7 @@ defmodule DataApi.Router do
   post "/data/:table" do
     IO.inspect(conn.body_params, label: "Parsed Body Params")
 
-    data = conn.body_params
+    data = Map.put_new(conn.body_params, "id", UUID.uuid4())
     columns = Map.keys(data)
     values = Map.values(data)
 
