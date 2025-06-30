@@ -3,6 +3,7 @@
     "columns": [
         "id",
         "name",
-        "email"
+        "email",
+        "role"
     ]
 }

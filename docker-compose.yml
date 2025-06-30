@@ -41,6 +41,9 @@ services:
       context: ./frontend
     ports:
       - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     environment:
       - NEXT_PUBLIC_API_BASE=http://localhost:4001
     depends_on:

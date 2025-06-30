@@ -30,9 +30,9 @@ defmodule DataApi.SchemaBuilder do
 
     # Example data rows
     rows = [
-      ["1", "Alice", "alice@example.com"],
-      ["2", "Bob", "bob@example.com"],
-      ["3", "Charlie", "charlie@example.com"]
+      ["1", "Alice", "alice@example.com", "owner"],
+      ["2", "Bob", "bob@example.com", "admin"],
+      ["3", "Charlie", "charlie@example.com", "user"]
     ]
 
     Enum.each(rows, fn row ->
