@@ -27,7 +27,8 @@ defmodule DataApi.MixProject do
       {:jason, "~> 1.0"},
       {:redix, "~> 1.1"},
       {:ecto_sql, "~> 3.11"},
-      {:postgrex, ">= 0.0.0"}
+      {:postgrex, ">= 0.0.0"},
+      {:cors_plug, "~> 3.0"}
     ]
   end
 end

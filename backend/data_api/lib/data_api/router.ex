@@ -7,6 +7,8 @@ defmodule DataApi.Router do
 
   plug(:match)
 
+  plug(CORSPlug, origin: ["http://localhost:3000"])
+
   plug(Plug.Parsers,
     parsers: [:json],
     pass: ["application/json"],
