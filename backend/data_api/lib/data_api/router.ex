@@ -142,7 +142,6 @@ defmodule DataApi.Router do
       schema ->
         case SchemaBuilder.insert_test_data(schema) do
           :ok -> send_resp(conn, 200, "✅ Test data inserted!")
-          {:error, reason} -> send_resp(conn, 500, "❌ Failed to insert data: #{inspect(reason)}")
         end
     end
   end

@@ -10,10 +10,16 @@ defmodule DataApi.Redis do
     Redix.start_link(host: @default_host, port: @default_port, name: :redis)
   end
 
-  def get(key, conn \\ :redis_server) do
+  def get(key, conn \\ nil) do
+    conn = conn || default_redix_name()
+
     case Redix.command!(conn, ["GET", key]) do
       nil -> nil
       json -> Jason.decode!(json)
     end
+  end
+
+  defp default_redix_name do
+    if Mix.env() == :test, do: Redix, else: :redis_server
   end
 end
