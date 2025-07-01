@@ -7,7 +7,7 @@ RUN mix local.hex --force && \
     mix local.rebar --force && \
     mix deps.get
 
-COPY . .              
+COPY . .
 RUN mix compile
 
 CMD ["mix", "run", "--no-halt"]

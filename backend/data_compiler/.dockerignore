@@ -1,3 +1,2 @@
-_build/
-deps/
-*.beam
+deps
+_build
