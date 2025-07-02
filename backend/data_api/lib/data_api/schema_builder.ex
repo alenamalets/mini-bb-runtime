@@ -28,7 +28,7 @@ defmodule DataApi.SchemaBuilder do
 
     sql = "INSERT INTO #{table} (#{column_list}) VALUES (#{placeholders})"
 
-    # Example data rows
+    # Example data rows (without ID)
     base_rows = [
       ["Alice", "alice@example.com", "owner"],
       ["Bob", "bob@example.com", "admin"],
@@ -36,9 +36,7 @@ defmodule DataApi.SchemaBuilder do
     ]
 
     Enum.each(base_rows, fn row ->
-      uuid = UUID.uuid4()
-      full_row = [uuid | row]
-      Ecto.Adapters.SQL.query!(DataApi.Repo, sql, full_row)
+      Ecto.Adapters.SQL.query!(DataApi.Repo, sql, row)
     end)
 
     :ok

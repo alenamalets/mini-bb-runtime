@@ -17,6 +17,34 @@ defmodule DataApi.Application do
       end
 
     opts = [strategy: :one_for_one, name: DataApi.Supervisor]
-    Supervisor.start_link(children, opts)
+
+    case Supervisor.start_link(children, opts) do
+      {:ok, pid} ->
+        run_migrations()
+        run_seed_data()
+        {:ok, pid}
+
+      error ->
+        error
+    end
+  end
+
+  defp run_migrations do
+    path = Application.app_dir(:data_api, "priv/repo/migrations")
+    Ecto.Migrator.run(DataApi.Repo, path, :up, all: true)
+  end
+
+  defp run_seed_data do
+    Ecto.Adapters.SQL.query!(
+      DataApi.Repo,
+      """
+      INSERT INTO users (name, email, role)
+      VALUES
+        ('Alice', 'alice@example.com', 'owner'),
+        ('Bob', 'bob@example.com', 'admin'),
+        ('Charlie', 'charlie@example.com', 'user')
+      ON CONFLICT DO NOTHING
+      """
+    )
   end
 end

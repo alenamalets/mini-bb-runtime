@@ -4,31 +4,14 @@ defmodule DataApiTest do
 
   @opts DataApi.Router.init([])
 
-  setup_all do
-    Ecto.Adapters.SQL.query!(
-      DataApi.Repo,
-      """
-        CREATE TABLE IF NOT EXISTS users (
-          id UUID PRIMARY KEY,
-          name TEXT,
-          email TEXT,
-          role TEXT
-        )
-      """,
-      []
-    )
-
-    :ok
-  end
-
   setup do
     Ecto.Adapters.SQL.query!(DataApi.Repo, "DELETE FROM users", [])
 
     Ecto.Adapters.SQL.query!(
       DataApi.Repo,
       """
-      INSERT INTO users (id, name, email, role)
-      VALUES ('11111111-1111-1111-1111-111111112111', 'Alice', 'alice@example.com', 'admin')
+      INSERT INTO users (name, email, role)
+      VALUES ('Alice', 'alice@example.com', 'admin')
       """,
       []
     )
